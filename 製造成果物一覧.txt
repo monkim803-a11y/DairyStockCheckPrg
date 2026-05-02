@@ -1,0 +1,141 @@
+リポジトリルート（必須）
+README.md
+LICENSE
+.gitignore
+docker-compose.yml
+Makefile
+requirements.txt / pyproject.toml（Python）または package.json（Node）
+env.example（環境変数テンプレート）
+
+サービス共通（必須）
+src/common/config.py / src/common/config.ts
+src/common/logging.py / src/common/logging.ts
+src/common/utils.py / src/common/utils.ts
+src/common/constants.py
+src/common/exceptions.py
+
+Ingest Service（必須）
+src/ingest/__init__.py
+src/ingest/scraper.py
+src/ingest/api_client.py
+src/ingest/normalizer.py
+src/ingest/scheduler.py
+src/ingest/ingest_worker.py
+src/ingest/requests_rate_limiter.py
+
+Raw Data Storage（必須）
+src/storage/raw_store.py
+src/storage/storage_client.py（S3 等抽象化）
+src/storage/retention_manager.py
+Feature Worker / Feature Store（必須）
+src/feature/feature_worker.py
+src/feature/indicators.py（MA/RSI/MACD 等）
+src/feature/news_scoring.py
+src/feature/feature_store_client.py
+src/feature/versioning.py
+
+Strategy Engine（必須）
+src/strategy/engine.py
+src/strategy/rule_loader.py
+src/strategy/signal.py
+src/strategy/parameter_store.py
+
+Risk Manager（必須）
+src/risk/manager.py
+src/risk/rules.py
+src/risk/circuit_breaker.py
+
+Order Manager（必須）
+src/order/order_manager.py
+src/order/order_queue.py
+src/order/execution_handler.py
+src/order/retry_policy.py
+
+Kabu API Client（必須）
+src/clients/kabu_client.py
+src/clients/kabu_models.py（リクエスト/レスポンス型）
+src/clients/auth.py
+
+Trade DB / Persistence（必須）
+src/db/models.py（ORM 定義）
+src/db/repository.py
+migrations/（マイグレーションスクリプト、例：alembic/ or migrations/*.sql）
+src/db/seed_data.py（テスト用シード）
+
+Backtest / Simulator（必須）
+src/backtest/engine.py
+src/backtest/slippage.py
+src/backtest/report.py
+src/sim/simulator.py
+src/sim/orderbook_model.py
+
+Scheduler / Orchestration（必須）
+src/scheduler/cron_jobs.py
+src/scheduler/airflow_dags.py（Airflow を使う場合）
+src/scheduler/job_runner.py
+
+Monitoring / Logging / Alerting（必須）
+src/monitoring/metrics.py
+src/monitoring/alerts.py
+src/monitoring/healthcheck.py
+
+Dashboard / API（推奨）
+src/api/app.py（FastAPI / Express 等）
+src/api/routes/feature_routes.py
+src/api/routes/trade_routes.py
+src/api/schemas.py（OpenAPI スキーマ）
+src/ui/dashboard_config.json（Grafana / Kibana ダッシュボード定義）
+
+管理画面（推奨）
+web/admin/src/main.tsx（React/Vue エントリ）
+web/admin/src/pages/RuleEditor.tsx
+web/admin/src/pages/JobMonitor.tsx
+web/admin/package.json
+
+設定・シークレット管理（必須）
+deploy/helm/values.yaml
+deploy/helm/chart.yaml
+deploy/k8s/deployment.yaml
+deploy/k8s/service.yaml
+deploy/secrets/example-secrets.yaml（暗号化前テンプレ）
+
+CI / CD（必須）
+.github/workflows/ci.yml または .gitlab-ci.yml
+ci/scripts/run_tests.sh
+ci/scripts/build_image.sh
+
+テスト資産（必須）
+tests/unit/test_feature_worker.py
+tests/unit/test_strategy_engine.py
+tests/integration/test_ingest_to_feature.py
+tests/e2e/test_uc01_uc05.py
+tests/fixtures/*.json
+tests/perf/k6_script.js（負荷試験）
+
+ドキュメント・Runbook（必須）
+docs/architecture.md
+docs/api_spec.yaml（OpenAPI）
+docs/runbook.md
+docs/deploy_guide.md
+
+ユーティリティ・運用スクリプト（推奨）
+scripts/backup_db.sh
+scripts/restore_db.sh
+scripts/rotate_logs.sh
+scripts/seed_demo_data.py
+
+セキュリティ・監査（推奨）
+security/scan_config.yml（Snyk 等）
+security/access_control.md（RBAC 設計）
+
+将来拡張（COULD）
+ml/model_registry.py（MLflow 連携）
+ml/train.py
+ml/serve_model.py
+
+出力形式（推奨）
+各サービスは src/<service>/ 配下に配置し、モジュール単位で __init__.py を用意してください。
+
+Docker イメージはサービス単位で作成し、Dockerfile を各サービスルートに置くことを推奨します（例：src/ingest/Dockerfile）。
+
+API 仕様は docs/api_spec.yaml（OpenAPI）で管理し、CI でスキーマ検証を行ってください。
